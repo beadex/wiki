@@ -8,7 +8,7 @@ Giờ hãy tưởng tượng như này: Một nhà máy (`Factory`) sẽ sản x
 
 Ta gọi những class dưới đây là product class.
 
-```
+```java
 interface Dispatcher<T> is
     method dispatch(action<T>)
 
@@ -27,7 +27,7 @@ class NumberDispatcher implements Dispatcher<number> is
 
 Dưới đây được gọi là một creator class. Trong class này phải define một method trả ra một product object. Thông thường các subclass sẽ có vai trò cung cấp implementation cho method này, tuy nhiên nó cũng có thể tự cung cấp default implementation.
 
-```
+```java
 abstract class Reducer<T> is
     abstract method createDispatcher(): Dispatcher<T>
     method reduce() is
@@ -37,7 +37,7 @@ abstract class Reducer<T> is
 
 Mặc dù được gọi là creator class, tuy nhiên vai trò chính của class này không phải để tạo ra các product object. Chúng thường chứa các core business logic hoạt động dựa trên hành vi của các product object được trả ra từ factory method.
 
-```
+```java
 class StringReducer extends Reducer<string> is
     override method createDispatcher(): Dispatcher<string> is
         return new StringDispatcher(dispatcherID)

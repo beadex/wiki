@@ -2,135 +2,51 @@
 
 **Fac­to­ry Method** là một Cre­ation­al Design Pat­tern cung cấp một inter­face nhằm mục đích khởi tạo các object trong một super­class, nhưng cho phép các sub­class­ có khả năng thay đổi kiểu (type) của các object sẽ được khởi tạo.
 
-## Phân tích ví dụ
+## Pseudocode & Phân tích
 
-```java
-interface Dispatcher<T> {
-    ActionResult<T> dispatch(Action<T> action);
-}
+Giờ hãy tưởng tượng như này: Một nhà máy (`Factory`) sẽ sản xuất ra một sản phẩm (`Product`), và cho rằng sản phẩm này phải tuân thủ theo một thiết kế về mặt chức năng nhất định (implements từ một interface duy nhất), đồng nghĩa với việc chúng có thể có các giá trị thuộc tính khác nhau, nhưng phải có cách tính năng giống y hệt nhau (nhưng việc khác nhau về thuộc tính có thể cho ra cách vận hành tính năng khác nhau, tuy nhiên số lượng tính năng thì như nhau!).
+
+Ta gọi những class dưới đây là product class.
+
+```
+interface Dispatcher<T> is
+    method dispatch(action<T>)
+
+class StringDispatcher implements Dispatcher<string> is
+    field dispatcherID
+    method dispatch(action<string>) is
+        // Define how to dispatch a string action's payload...
+
+class NumberDispatcher implements Dispatcher<number> is
+    field dispatcherID
+    method dispatch(action<number>) is
+        // Define how to dispatch a number action's payload...
 ```
 
-Giả dụ chúng ta có một interface `Dispatcher` có một method `dispatch` mà ở đó nó nhận vào một object `Action`
+Đảm bảo tất cả các sản phẩm cụ thể (`StringDispatcher`, `NumberDispatcher`,...) implements chung một interface (`Dispatcher`). Tại interface này, define các method có ý nghĩa với mọi sản phẩm cụ thể.
 
-```java
-class Action<T> {
-    private ActionType type;
-    private T payload;
-}
+Dưới đây được gọi là một creator class. Trong class này phải define một method trả ra một product object. Thông thường các subclass sẽ có vai trò cung cấp implementation cho method này, tuy nhiên nó cũng có thể tự cung cấp default implementation.
+
 ```
-và trả ra một object `ActionResult`
-```java
-class ActionResult<T> extends Action<T> {
-    private int dispatcherID;
-}
-```
-Bản chất của `ActionResult` được extends từ `Action`, một `ActionResult` sẽ có `type` và `payload` của `Action` vừa được `dispatch` cùng với `ID` của `Dispatcher` thực hiện hành động đó.
-
-Nhớ rằng các interface/class này đều có generic type dành cho `payload` của `Action`.
-
-Ở trong ví dụ này chúng ta implements 2 object `Dispatcher` chính là `StringDispatcher` và `IntegerDispatcher`, đồng nghĩa với type nhận vào của `Action.payload` là `String` và `Integer`.
-
-```java
-public class StringDispatcher implements Dispatcher<String> {
-    private int dispatcherID;
-
-    public StringDispatcher(int dispatcherID) {
-        this.dispatcherID = dispatcherID;
-    }
-
-    @Override
-    public ActionResult<String> dispatch(Action<String> action) {
-        return new ActionResult<>(action.getType(), action.getPayload(), this.dispatcherID);
-    }
-
-    public int getDispatcherID() {
-        return dispatcherID;
-    }
-
-    public void setDispatcherID(int dispatcherID) {
-        this.dispatcherID = dispatcherID;
-    }
-}
-```
-```java
-public class IntergerDispatcher implements Dispatcher<Integer> {
-    private int dispatcherID;
-
-    public IntergerDispatcher(int dispatcherID) {
-        this.dispatcherID = dispatcherID;
-    }
-
-    @Override
-    public ActionResult<Integer> dispatch(Action<Integer> action) {
-        return new ActionResult<>(action.getType(), action.getPayload(), this.dispatcherID);
-    }
-
-    public int getDispatcherID() {
-        return dispatcherID;
-    }
-
-    public void setDispatcherID(int dispatcherID) {
-        this.dispatcherID = dispatcherID;
-    }
-}
+abstract class Reducer<T> is
+    abstract method createDispatcher(): Dispatcher<T>
+    method reduce() is
+        Dispatcher<T> dispatcher = this.createDispatcher()
+        dispatcher.dispatch()
 ```
 
-Giờ đây chúng ta đã có các đối tượng `Dispatcher`, việc tiếp theo cần làm là sử dụng method duy nhất của chúng là `dispatch`. Tạm gọi đối tượng sẽ đảm nhiệm việc execute `dispatch` của `Dispatcher` là một `Reducer`.
+Mặc dù được gọi là creator class, tuy nhiên vai trò chính của class này không phải để tạo ra các product object. Chúng thường chứa các core business logic hoạt động dựa trên hành vi của các product object được trả ra từ factory method.
 
-```java
-public interface Reducer<T> {
-  ActionResult<T> reduce(Action<T> action);
-}
+```
+class StringReducer extends Reducer<string> is
+    override method createDispatcher(): Dispatcher<string> is
+        return new StringDispatcher(dispatcherID)
+
+class NumberReducer extends Reducer<number> is
+    override method createDispatcher(): Dispatcher<number> is
+        return new NumberDispatcher(dispatcherID)
 ```
 
-Method `reduce` sẽ có nhiệm vụ tạo ra `Dispatcher` với type tương ứng và call method `dispatch` của `Dispatcher` đó, implement như sau:
+Các subclass của creator class có thể thay đổi gián tiếp các business logic này bằng cách override factory method và trả ra các type khác nhau của product object.
 
-```java
-@Override
-public ActionResult<T> reduce(Action<T> action) {
-    Dispatcher<T> dispatcher = createDispatcher();
-    return dispatcher.dispatch(action);
-}
-```
-
-Triển khai method `createDispatcher` thông qua một implement của `Reducer` có tên là `ReducerCreator`.
-```java
-abstract class ReducerCreator<T> implements Reducer<T> {
-    public abstract Dispatcher<T> createDispatcher();
-
-    @Override
-    public ActionResult<T> reduce(Action<T> action) {
-        Dispatcher<T> dispatcher = createDispatcher();
-        return dispatcher.dispatch(action);
-    }
-}
-```
-
-Hiện tại chúng ta đã có abstract class được gọi là `Factory` sẵn sàng cho việc implements cách thay đổi kiểu object được khởi tạo dựa trên type của `Reducer`. Ở đây dựa theo 2 hai loại `Dispatcher` define ở trên, chúng ta có 2 `Reducer` tương ứng.
-```java
-class StringReducer extends ReducerCreator<String> {
-    private final Random rand = new Random();
-    @Override
-    public Dispatcher<String> createDispatcher() {
-        return new StringDispatcher(rand.nextInt(255));
-    }
-}
-```
-```java
-class IntegerReducer extends ReducerCreator<Integer> {
-    private final Random rand = new Random();
-    @Override
-    public Dispatcher<Integer> createDispatcher() {
-        return new IntergerDispatcher(rand.nextInt(255));
-    }
-}
-```
-
-Hiện tại, ta có thể có được cách sử dụng các `Factory` như sau:
-```java
-Reducer<String> reducer = new StringReducer();
-Action<String> action = new Action<>(ActionType.DELETE, "DELETE ACTION");
-reducer.reduce(action);
-```
-
-...To be update!
+To be update...!

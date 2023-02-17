@@ -1,10 +1,10 @@
-package reducers;
+package bead.ex.FactoryMethod.reducers;
 
-import dispatchers.impl.IntergerDispatcher;
-import dispatchers.impl.StringDispatcher;
-import enums.ActionType;
-import models.Action;
-import models.ActionResult;
+import bead.ex.FactoryMethod.dispatchers.impl.IntergerDispatcher;
+import bead.ex.FactoryMethod.dispatchers.impl.StringDispatcher;
+import bead.ex.FactoryMethod.enums.ActionType;
+import bead.ex.FactoryMethod.models.Action;
+import bead.ex.FactoryMethod.models.ActionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

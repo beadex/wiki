@@ -1,8 +1,8 @@
-package reducers.impl;
+package bead.ex.FactoryMethod.reducers.impl;
 
-import dispatchers.Dispatcher;
-import dispatchers.impl.IntergerDispatcher;
-import reducers.ReducerCreator;
+import bead.ex.FactoryMethod.dispatchers.Dispatcher;
+import bead.ex.FactoryMethod.dispatchers.impl.IntergerDispatcher;
+import bead.ex.FactoryMethod.reducers.ReducerCreator;
 
 import java.util.Random;
 

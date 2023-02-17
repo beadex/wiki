@@ -1,6 +1,6 @@
-package models;
+package bead.ex.FactoryMethod.models;
 
-import enums.ActionType;
+import bead.ex.FactoryMethod.enums.ActionType;
 
 public class ActionResult<T> extends Action<T> {
     private int dispatcherID;

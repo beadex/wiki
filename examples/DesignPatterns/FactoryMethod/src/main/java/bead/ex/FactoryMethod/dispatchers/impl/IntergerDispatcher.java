@@ -1,8 +1,8 @@
-package dispatchers.impl;
+package bead.ex.FactoryMethod.dispatchers.impl;
 
-import dispatchers.Dispatcher;
-import models.Action;
-import models.ActionResult;
+import bead.ex.FactoryMethod.dispatchers.Dispatcher;
+import bead.ex.FactoryMethod.models.Action;
+import bead.ex.FactoryMethod.models.ActionResult;
 
 public class IntergerDispatcher implements Dispatcher<Integer> {
     private int dispatcherID;

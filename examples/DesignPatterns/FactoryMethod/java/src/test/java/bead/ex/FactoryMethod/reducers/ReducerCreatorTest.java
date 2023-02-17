@@ -1,10 +1,7 @@
 package bead.ex.FactoryMethod.reducers;
 
-import bead.ex.FactoryMethod.dispatchers.impl.IntergerDispatcher;
-import bead.ex.FactoryMethod.dispatchers.impl.StringDispatcher;
-import bead.ex.FactoryMethod.enums.ActionType;
-import bead.ex.FactoryMethod.models.Action;
-import bead.ex.FactoryMethod.models.ActionResult;
+import java.util.Random;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +10,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Random;
+import bead.ex.FactoryMethod.dispatchers.impl.IntergerDispatcher;
+import bead.ex.FactoryMethod.dispatchers.impl.StringDispatcher;
+import bead.ex.FactoryMethod.enums.ActionType;
+import bead.ex.FactoryMethod.models.Action;
+import bead.ex.FactoryMethod.models.ActionResult;
 
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
@@ -23,10 +24,10 @@ class ReducerCreatorTest {
     private int dispatcherID;
 
     @Mock
-    private ReducerCreator<String> stringReducerCreator;
+    private Reducer<String> stringReducerCreator;
 
     @Mock
-    private ReducerCreator<Integer> integerReducerCreator;
+    private Reducer<Integer> integerReducerCreator;
 
     @BeforeEach
     public void setUp() {
@@ -35,8 +36,8 @@ class ReducerCreatorTest {
         this.integerAction = new Action<>(ActionType.CREATE, 1);
         this.dispatcherID = rand.nextInt(255);
 
-        this.stringReducerCreator = Mockito.mock(ReducerCreator.class);
-        this.integerReducerCreator = Mockito.mock(ReducerCreator.class);
+        this.stringReducerCreator = Mockito.mock(Reducer.class);
+        this.integerReducerCreator = Mockito.mock(Reducer.class);
     }
 
     @Test

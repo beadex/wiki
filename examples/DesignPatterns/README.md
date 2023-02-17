@@ -1,4 +1,4 @@
-# Design Patterns Example in Java
+# Design Patterns Examples
 
 ## Creational Patterns
 
